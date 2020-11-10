@@ -12,11 +12,11 @@ namespace VM.Console
 
             var url = Environment.GetEnvironmentVariable("TEST_URL"); 
             
-            //initial call from local machine to test out the API
             var client = new HttpClient();
             while (true) //TODO: background process for checking out functionality
             {
                 var receivedInput = await client.GetStringAsync(url);
+                
                 System.Console.WriteLine(receivedInput);
                 await Task.Delay(2000); //delay for 2 seconds and call again
             }

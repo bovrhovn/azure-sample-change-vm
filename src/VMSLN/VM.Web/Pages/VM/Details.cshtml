@@ -1,0 +1,40 @@
+@page "{id}"
+@model DetailsPageModel
+
+@{
+    var machine = Model.VirtualMachine;
+    ViewData["Title"] = "VM details " + machine.Name;
+}
+
+<h1 class="display-4">
+    Details about @machine.Name named @machine.ComputerName in resource group @machine.ResourceGroupName
+</h1>
+
+<div class="card" style="width: 18rem;">
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">@machine.Plan</li>
+        <li class="list-group-item">@machine.Size.Value</li>
+        <li class="list-group-item">@machine.PowerState.Value</li>
+        <li class="list-group-item">@machine.OSType.ToString()</li>
+    </ul>
+    <div class="card-footer">
+        Basic information
+    </div>
+</div>
+
+<h2>
+    Possible sizes
+</h2>
+<form method="post">
+    <div class="form-group">
+        <input type="hidden" asp-for="Id"/>
+        <label for="sizeCombo">Select a size to be migrated to</label>
+        <select class="form-control" id="sizeCombo" name="size">
+            @foreach (var listItem in Model.PossibleSizes)
+            {
+                <option value="@listItem.Value">@listItem.Text</option>
+            }
+        </select>
+        <button type="submit" class="btn btn-light">Change the size <i class="fas fa-radiation-alt"></i></button>
+    </div>
+</form>

@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
+using VM.Web.Hub;
 using VM.Web.Options;
 
 namespace VM.Web
@@ -20,7 +21,7 @@ namespace VM.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<AzureAdOptions>(Configuration.GetSection("AzureAd"));
-            
+            services.AddSignalR();
             //add authentication to AAD
             services.AddMicrosoftIdentityWebAppAuthentication(Configuration);
             
@@ -50,7 +51,11 @@ namespace VM.Web
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapRazorPages(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapRazorPages();
+                endpoints.MapHub<NotificationHub>("/notification");
+            });
         }
     }
 }

@@ -9,5 +9,6 @@ namespace VM.Web.Options
         public string CallbackPath { get; set; }
         public string SignedOutCallbackPath { get; set; }
         public string ClientSecret { get; set; }
+        public string SubscriptionId { get; set; }
     }
 }
