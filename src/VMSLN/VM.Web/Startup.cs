@@ -1,8 +1,13 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Identity.Web;
+using Microsoft.Identity.Web.UI;
+using VM.Web.Options;
 
 namespace VM.Web
 {
@@ -14,6 +19,19 @@ namespace VM.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<AzureAdOptions>(Configuration.GetSection("AzureAd"));
+            
+            //add authentication to AAD
+            services.AddMicrosoftIdentityWebAppAuthentication(Configuration);
+            
+            services.AddControllersWithViews(options =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+                options.Filters.Add(new AuthorizeFilter(policy));
+            }).AddMicrosoftIdentityUI();
+            
             services.AddRazorPages().AddRazorPagesOptions(options =>
             {
                 options.Conventions.AddPageRoute("/Info/Index", "");
@@ -29,6 +47,7 @@ namespace VM.Web
 
             app.UseStaticFiles();
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapRazorPages(); });
