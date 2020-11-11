@@ -11,7 +11,7 @@
 
 <p>Test sending email with creds</p>
 
-<form>
+<form method="post">
     <div class="form-group">
         <label for="subject">Subject</label>
         <input type="text" class="form-control" id="subject" asp-for="Subject"/>
@@ -23,6 +23,6 @@
     <button type="submit" class="btn btn-primary">Send email</button>
 </form>
 
-<p class="text-dark font-weight-bolder">
+<p class="text-dark font-weight-bolder mt-3">
     @Model.InfoText
 </p>
