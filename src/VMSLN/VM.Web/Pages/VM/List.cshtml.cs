@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.SignalR;
@@ -14,6 +15,7 @@ using VM.Web.Options;
 
 namespace VM.Web.Pages.VM
 {
+    [Authorize]
     public class ListPageModel : PageModel
     {
         private readonly IHubContext<NotificationHub> notificationHubContext;

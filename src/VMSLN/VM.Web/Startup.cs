@@ -1,14 +1,14 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using VM.Web.Hub;
+using VM.Web.Interfaces;
 using VM.Web.Options;
+using VM.Web.Services;
 
 namespace VM.Web
 {
@@ -21,17 +21,15 @@ namespace VM.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<AzureAdOptions>(Configuration.GetSection("AzureAd"));
+            services.Configure<SendGridOptions>(Configuration.GetSection("SendGridOptions"));
             services.AddSignalR();
-            //add authentication to AAD
-            services.AddMicrosoftIdentityWebAppAuthentication(Configuration);
             
-            services.AddControllersWithViews(options =>
-            {
-                var policy = new AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .Build();
-                options.Filters.Add(new AuthorizeFilter(policy));
-            }).AddMicrosoftIdentityUI();
+            var sendGridSettings = Configuration.GetSection("SendGridOptions").Get<SendGridOptions>();
+            services.AddScoped<IEmailService, SendGridEmailSender>(
+                _ => new SendGridEmailSender(sendGridSettings.ApiKey));
+            
+            services.AddMicrosoftIdentityWebAppAuthentication(Configuration);
+            services.AddControllersWithViews().AddMicrosoftIdentityUI();
             
             services.AddRazorPages().AddRazorPagesOptions(options =>
             {

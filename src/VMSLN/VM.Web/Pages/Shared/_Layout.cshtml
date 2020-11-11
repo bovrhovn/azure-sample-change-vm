@@ -28,14 +28,7 @@
                     </li>
                 </ul>
             </div>
-            <form class="form-inline my-2 my-lg-0">
-                @if (User.Identity.IsAuthenticated)
-                {
-                    <span class="font-weight-bolder mr-1">Welcome @User.Identity.Name</span>
-                    <i class="fa fa-grip-lines-vertical"></i>
-                    <a class="text-dark ml-1" asp-page="/Account/Logout" asp-area="MicrosoftIdentity">logout</a>
-                }
-            </form>
+            @await Html.PartialAsync("_LoginPartial")
         </div>
     </nav>
 </header>
