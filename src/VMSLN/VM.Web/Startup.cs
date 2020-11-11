@@ -60,6 +60,7 @@ namespace VM.Web
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
+                endpoints.MapControllers();
                 endpoints.MapHub<NotificationHub>("/notification");
             });
         }

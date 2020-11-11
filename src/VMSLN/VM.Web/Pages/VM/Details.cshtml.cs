@@ -32,7 +32,7 @@ namespace VM.Web.Pages.VM
             this.azureVmService = azureVmService;
         }
 
-        public async Task OnGet(string id)
+        public async Task OnGetAsync(string id)
         {
             Id = id;
             logger.LogInformation($"Calling virtual machine by ID {Id}");

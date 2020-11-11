@@ -12,16 +12,15 @@
 
 <div class="card" style="width: 18rem;">
     <ul class="list-group list-group-flush">
-        <li class="list-group-item">@machine.Plan</li>
+        <li class="list-group-item">@machine.ResourceGroupName</li>
         <li class="list-group-item">@machine.Size.Value</li>
-        <li class="list-group-item">@machine.PowerState.Value</li>
+        <li class="list-group-item">@(machine.PowerState == null ? "Powerstate is not determined, refresh view" : machine.PowerState.Value)</li>
         <li class="list-group-item">@machine.OSType.ToString()</li>
     </ul>
     <div class="card-footer">
         Basic information
     </div>
 </div>
-
 <h2>
     Possible sizes to change
 </h2>
@@ -35,8 +34,8 @@
                 <option value="@listItem.Value">@listItem.Text</option>
             }
         </select>
-        <button type="submit" class="btn btn-light">Change the size <i class="fas fa-radiation-alt"></i></button>
     </div>
+    <button type="submit" class="btn btn-danger">Change the size <i class="fas fa-radiation-alt"></i></button>
 </form>
 
 <p class="text-danger font-weight-bolder">@Model.InfoText</p>

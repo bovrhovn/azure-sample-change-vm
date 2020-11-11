@@ -13,7 +13,7 @@ namespace VM.Web.Controllers
 {
     [ApiController]
     [Route("router")]
-    public class AlertNotificationController : Controller
+    public class AlertNotificationController : ControllerBase
     {
         private readonly ILogger<AlertNotificationController> logger;
         private readonly IEmailService emailService;
@@ -27,7 +27,11 @@ namespace VM.Web.Controllers
             this.emailService = emailService;
         }
 
+        [Route("check")]
+        public IActionResult HealthCheck() => Ok($"Call was successfully done at {DateTime.Now}");
+
         [Route("size-request")]
+        [HttpPost]
         public async Task<IActionResult> ResizeRequest()
         {
             try

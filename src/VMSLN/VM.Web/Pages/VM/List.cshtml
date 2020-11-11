@@ -19,7 +19,7 @@
             Name
         </td>
         <td>
-            Plan
+            Resource name and group
         </td>
         <td>
             Operating system
@@ -27,38 +27,54 @@
         <td>
             Powerstate
         </td>
+        <td>Start/Stop</td>
         <td>...</td>
     </tr>
     @foreach (var azureVm in Model.Vms)
     {
         <tr>
             <td>@azureVm.ComputerName</td>
-            <td>@azureVm.Plan.Name</td>
+            <td>@azureVm.Name in @azureVm.ResourceGroupName</td>
             <td>@azureVm.Size</td>
-            <td>@azureVm.PowerState.Value</td>
+            @if (azureVm.PowerState != null)
+            {
+                <td>@azureVm.PowerState.Value</td>
+                <td>
+                    @if (azureVm.PowerState == PowerState.Stopped || azureVm.PowerState == PowerState.Deallocated)
+                    {
+                        <form method="post">
+                            <input type="hidden" asp-for="VirtualMachineId" value="@azureVm.VMId"/>
+                            <input type="hidden" asp-for="IsShutdown" value="true"/>
+                            <button type="submit" class="btn">
+                                <i class="fas fa-play"></i>
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form method="post">
+                            <input type="hidden" asp-for="VirtualMachineId" value="@azureVm.VMId"/>
+                            <input type="hidden" asp-for="IsShutdown" value="false"/>
+                            <button type="submit" class="btn">
+                                <i class="fas fa-stop-circle"></i>
+                            </button>
+                        </form>
+                    }
+
+                </td>
+            }
+            else
+            {
+                <td colspan="2">
+                    <span class="text-center">
+                        No power status available - refresh the view
+                    </span>
+                </td>
+            }
             <td>
-                @if (azureVm.PowerState == PowerState.Stopped || azureVm.PowerState == PowerState.Deallocated)
-                {
-                    <form method="post">
-                        <input type="hidden" asp-for="VirtualMachineId" value="@azureVm.VMId"/>
-                        <input type="hidden" asp-for="IsShutdown" value="true"/>
-                        <button type="submit">
-                            <i class="fas fa-play"></i>
-                        </button>
-                    </form>
-                }
-                else
-                {
-                    <form method="post">
-                        <input type="hidden" asp-for="VirtualMachineId" value="@azureVm.VMId"/>
-                        <input type="hidden" asp-for="IsShutdown" value="false"/>
-                        <button type="submit">
-                            <i class="fas fa-play"></i>
-                        </button>
-                    </form>
-                }
-                &nbsp;
-                <a asp-page="/Details" asp-route-id="@azureVm.VMId"><i class="fas fa-arrow-right"></i></a>
+                <a asp-page="/VM/Details" asp-route-id="@azureVm.VMId">
+                    <i class="fas fa-arrow-right"></i>
+                </a>
             </td>
         </tr>
     }

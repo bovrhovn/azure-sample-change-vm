@@ -45,7 +45,8 @@ namespace VM.Web.Services
 
         public async Task<IVirtualMachine> GetMachineByIdAsync(string id)
         {
-            var virtualMachine = await azure.VirtualMachines.GetByIdAsync(id);
+            var virtualMachines = await azure.VirtualMachines.ListAsync(true, CancellationToken.None);
+            var virtualMachine = virtualMachines.FirstOrDefault(d => d.VMId == id);
             return virtualMachine;
         }
 
