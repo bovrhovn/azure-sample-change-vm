@@ -93,7 +93,13 @@ namespace VM.Web.Services
                 virtualMachine.Inner.HardwareProfile.VmSize = newSize;
 
                 //update the status
-                virtualMachine.Update();
+                await azure.VirtualMachines.Inner
+                    .UpdateAsync(virtualMachine.ResourceGroupName,
+                        virtualMachine.Name,
+                        new VirtualMachineUpdate
+                        {
+                            HardwareProfile = virtualMachine.Inner.HardwareProfile
+                        });
 
                 //start the machine
                 await azure.VirtualMachines.StartAsync(virtualMachine.ResourceGroupName, virtualMachine.Name,
