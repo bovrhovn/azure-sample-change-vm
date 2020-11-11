@@ -10,6 +10,7 @@ using Microsoft.Azure.Management.Compute.Fluent;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using VM.Web.Interfaces;
+using VM.Web.Models;
 using VM.Web.Options;
 
 namespace VM.Web.Pages.VM
@@ -37,7 +38,16 @@ namespace VM.Web.Pages.VM
             Id = id;
             logger.LogInformation($"Calling virtual machine by ID {Id}");
             var virtualMachine = await azureVmService.GetMachineByIdAsync(id);
-            VirtualMachine = virtualMachine;
+            VirtualMachine = new AzureMachineViewModel
+            {
+                Os = virtualMachine.OSType.ToString(),
+                Powerstate = virtualMachine.PowerState == null
+                    ? "Powerstate is not determined, refresh view"
+                    : virtualMachine.PowerState.Value,
+                Name = virtualMachine.Name,
+                Size = virtualMachine.Size == null ? "Size not retrieved" : virtualMachine.Size.Value,
+                ResourceGroup = virtualMachine.ResourceGroupName
+            };
 
             logger.LogInformation("Getting back the information about available sizes");
 
@@ -96,6 +106,6 @@ namespace VM.Web.Pages.VM
         [BindProperty] public string Id { get; set; }
         [TempData] public string InfoText { get; set; }
         [BindProperty] public List<SelectListItem> PossibleSizes { get; set; }
-        [BindProperty(SupportsGet = false)] public IVirtualMachine VirtualMachine { get; private set; }
+        [BindProperty] public AzureMachineViewModel VirtualMachine { get; set; } = new AzureMachineViewModel();
     }
 }

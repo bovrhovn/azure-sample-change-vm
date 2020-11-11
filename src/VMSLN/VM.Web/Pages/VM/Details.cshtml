@@ -7,18 +7,18 @@
 }
 
 <h1 class="display-4">
-    Details about @machine.Name named @machine.ComputerName in resource group @machine.ResourceGroupName
+    Details about @machine.Name in resource group @machine.ResourceGroup
 </h1>
 
-<div class="card" style="width: 18rem;">
+<div class="card mb-2" style="width: 18rem;">
     <ul class="list-group list-group-flush">
-        <li class="list-group-item">@machine.ResourceGroupName</li>
-        <li class="list-group-item">@machine.Size.Value</li>
-        <li class="list-group-item">@(machine.PowerState == null ? "Powerstate is not determined, refresh view" : machine.PowerState.Value)</li>
-        <li class="list-group-item">@machine.OSType.ToString()</li>
+        <li class="list-group-item">@machine.Name</li>
+        <li class="list-group-item">@machine.Size</li>
+        <li class="list-group-item">@machine.Powerstate</li>
+        <li class="list-group-item">@machine.Os</li>
     </ul>
     <div class="card-footer">
-        Basic information
+        Basic information about selected virtual machine
     </div>
 </div>
 <h2>
@@ -34,7 +34,8 @@
             }
         </select>
     </div>
-    <button type="submit" class="btn btn-danger">Change the size <i class="fas fa-radiation-alt"></i></button>
+    <button type="submit" 
+            class="btn btn-danger">Change the size <i class="fas fa-radiation-alt"></i></button>
 </form>
 
-<p class="text-danger font-weight-bolder">@Model.InfoText</p>
+<p class="text-danger font-weight-bolder mt-4">@Model.InfoText</p>

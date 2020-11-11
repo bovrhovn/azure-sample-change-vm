@@ -20,7 +20,7 @@ namespace VM.Web.Services
     {
         private readonly ILogger<AzureVmService> logger;
         private readonly IAzure azure;
-        
+
         public AzureVmService(IOptions<AzureAdOptions> azureAdOptionsValue, ILogger<AzureVmService> logger)
         {
             this.logger = logger;
@@ -29,7 +29,7 @@ namespace VM.Web.Services
             var credentials = SdkContext.AzureCredentialsFactory
                 .FromServicePrincipal(adOptions.ClientId, adOptions.ClientSecret,
                     adOptions.TenantId, AzureEnvironment.AzureGlobalCloud);
-            
+
             azure = Microsoft.Azure.Management.Fluent.Azure
                 .Configure()
                 .Authenticate(credentials)
@@ -50,16 +50,18 @@ namespace VM.Web.Services
             return virtualMachine;
         }
 
-        public async Task<bool> ChangeStateAsync(string id,bool start = false)
+        public async Task<bool> ChangeStateAsync(string id, bool start = false)
         {
             try
             {
                 var machine = await GetMachineByIdAsync(id);
                 logger.LogInformation($"Starting to change the state at {DateTime.Now}");
                 if (start)
-                    await azure.VirtualMachines.StartAsync(machine.ResourceGroupName, machine.Name, CancellationToken.None);
+                    await azure.VirtualMachines.StartAsync(machine.ResourceGroupName, machine.Name,
+                        CancellationToken.None);
                 else
-                    await azure.VirtualMachines.PowerOffAsync(machine.ResourceGroupName, machine.Name, CancellationToken.None);
+                    await azure.VirtualMachines.PowerOffAsync(machine.ResourceGroupName, machine.Name,
+                        CancellationToken.None);
                 logger.LogInformation($"State changed at {DateTime.Now}");
             }
             catch (Exception e)
@@ -67,6 +69,7 @@ namespace VM.Web.Services
                 logger.LogError(e.Message);
                 return false;
             }
+
             return true;
         }
 
@@ -75,19 +78,32 @@ namespace VM.Web.Services
             try
             {
                 var virtualMachine = await GetMachineByIdAsync(id);
-                
+
                 logger.LogInformation($"Doing resizing with size {size}");
-                
+
                 var startWatch = Stopwatch.StartNew();
                 startWatch.Start();
-                
-                virtualMachine.Inner.HardwareProfile.VmSize =
-                    ExpandableStringEnum<VirtualMachineSizeTypes>.Parse(size);
+
+                //stop the VM
+                await azure.VirtualMachines.PowerOffAsync(virtualMachine.ResourceGroupName, virtualMachine.Name,
+                    CancellationToken.None);
+
+                //do the change
+                var newSize = ExpandableStringEnum<VirtualMachineSizeTypes>.Parse(size);
+                virtualMachine.Inner.HardwareProfile.VmSize = newSize;
+
+                //update the status
                 virtualMachine.Update();
-                
+
+                //start the machine
+                await azure.VirtualMachines.StartAsync(virtualMachine.ResourceGroupName, virtualMachine.Name,
+                    CancellationToken.None);
+
                 startWatch.Stop();
-                logger.LogInformation($"Machine size changing took {startWatch.ElapsedMilliseconds} ms ({startWatch.ElapsedMilliseconds/1000} s)");
-                    
+                
+                logger.LogInformation(
+                    $"Machine size changing took {startWatch.ElapsedMilliseconds} ms ({startWatch.ElapsedMilliseconds / 1000} s)");
+
                 startWatch.Start();
 
                 if (virtualMachine.PowerState == PowerState.Stopped ||
@@ -96,10 +112,11 @@ namespace VM.Web.Services
                     logger.LogInformation("Starting the machine as it has stopped or been deallocated.");
                     await virtualMachine.StartAsync();
                 }
-                
+
                 startWatch.Stop();
-                
-                logger.LogInformation($"Machine updated with new size {size} and started machine in {startWatch.ElapsedMilliseconds} ms ({startWatch.ElapsedMilliseconds/1000} s).");
+
+                logger.LogInformation(
+                    $"Machine updated with new size {size} and started machine in {startWatch.ElapsedMilliseconds} ms ({startWatch.ElapsedMilliseconds / 1000} s).");
             }
             catch (Exception e)
             {
