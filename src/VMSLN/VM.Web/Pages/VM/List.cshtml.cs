@@ -39,7 +39,7 @@ namespace VM.Web.Pages.VM
             logger.LogInformation($"Received {Vms.Count} machines");
         }
 
-        public async Task<RedirectToPageResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync()
         {
             logger.LogInformation($"Changing state for the machine to {(IsShutdown ? "start" : "stop")}");
             await azureVmService.ChangeStateAsync(VirtualMachineId, IsShutdown);

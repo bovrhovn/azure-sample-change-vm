@@ -26,7 +26,6 @@
 </h2>
 <form method="post">
     <div class="form-group">
-        <input type="hidden" asp-for="Id"/>
         <label for="sizeCombo">Select a size to be migrated to</label>
         <select class="form-control" id="sizeCombo" name="size">
             @foreach (var listItem in Model.PossibleSizes)

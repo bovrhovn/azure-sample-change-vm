@@ -53,7 +53,7 @@ namespace VM.Web.Pages.VM
             PossibleSizes = list;
         }
 
-        public async Task<RedirectToPageResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync()
         {
             var form = await Request.ReadFormAsync();
 
@@ -78,7 +78,8 @@ namespace VM.Web.Pages.VM
 
                     startWatch.Stop();
 
-                    var message = $"Email sent and it took {startWatch.ElapsedMilliseconds} ms ({startWatch.ElapsedMilliseconds / 1000} s)";
+                    var message =
+                        $"Email sent and it took {startWatch.ElapsedMilliseconds} ms ({startWatch.ElapsedMilliseconds / 1000} s)";
                     InfoText = message;
                     logger.LogInformation(message);
                 }
@@ -89,12 +90,12 @@ namespace VM.Web.Pages.VM
                 }
             }
 
-            return RedirectToPage("/VM/Details", Id);
+            return RedirectToPage("/VM/Details", new {id = Id});
         }
 
         [BindProperty] public string Id { get; set; }
         [TempData] public string InfoText { get; set; }
         [BindProperty] public List<SelectListItem> PossibleSizes { get; set; }
-        [BindProperty] public IVirtualMachine VirtualMachine { get; private set; }
+        [BindProperty(SupportsGet = false)] public IVirtualMachine VirtualMachine { get; private set; }
     }
 }
