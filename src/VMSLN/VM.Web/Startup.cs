@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,6 +29,12 @@ namespace VM.Web
             var sendGridSettings = Configuration.GetSection("SendGridOptions").Get<SendGridOptions>();
             services.AddScoped<IEmailService, SendGridEmailSender>(
                 _ => new SendGridEmailSender(sendGridSettings.ApiKey));
+
+            services.AddScoped<IAzureVmService, AzureVmService>();
+            
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
+            services.AddHttpContextAccessor();
             
             services.AddMicrosoftIdentityWebAppAuthentication(Configuration);
             services.AddControllersWithViews().AddMicrosoftIdentityUI();

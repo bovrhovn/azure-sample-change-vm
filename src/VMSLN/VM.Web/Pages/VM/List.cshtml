@@ -40,8 +40,7 @@
                 @if (azureVm.PowerState == PowerState.Stopped || azureVm.PowerState == PowerState.Deallocated)
                 {
                     <form method="post">
-                        <input type="hidden" asp-for="Name" value="@azureVm.Name"/>
-                        <input type="hidden" asp-for="ResourceGroupName" value="@azureVm.ResourceGroupName"/>
+                        <input type="hidden" asp-for="VirtualMachineId" value="@azureVm.VMId"/>
                         <input type="hidden" asp-for="IsShutdown" value="true"/>
                         <button type="submit">
                             <i class="fas fa-play"></i>
@@ -51,8 +50,7 @@
                 else
                 {
                     <form method="post">
-                        <input type="hidden" asp-for="Name"/>
-                        <input type="hidden" asp-for="ResourceGroupName" value="@azureVm.ResourceGroupName"/>
+                        <input type="hidden" asp-for="VirtualMachineId" value="@azureVm.VMId"/>
                         <input type="hidden" asp-for="IsShutdown" value="false"/>
                         <button type="submit">
                             <i class="fas fa-play"></i>
